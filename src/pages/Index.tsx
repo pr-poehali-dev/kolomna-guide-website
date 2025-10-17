@@ -3,10 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('routes');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<any>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const routes = [
     {
@@ -17,6 +21,7 @@ const Index = () => {
       description: 'Прогулка по сердцу древней Коломны с посещением Кремля и старинных храмов',
       difficulty: 'Легкий',
       highlights: ['Коломенский Кремль', 'Успенский собор', 'Музей пастилы'],
+      coordinates: '55.0983,38.7788',
     },
     {
       id: 2,
@@ -26,6 +31,7 @@ const Index = () => {
       description: 'Живописный маршрут вдоль реки Москвы с отдыхом в городских парках',
       difficulty: 'Легкий',
       highlights: ['Набережная Москвы-реки', 'Парк Мира', 'Смотровая площадка'],
+      coordinates: '55.0950,38.7650',
     },
     {
       id: 3,
@@ -35,6 +41,7 @@ const Index = () => {
       description: 'Знакомство с купеческой Коломной и традиционной архитектурой',
       difficulty: 'Средний',
       highlights: ['Купеческие усадьбы', 'Деревянное зодчество', 'Ремесленные мастерские'],
+      coordinates: '55.1020,38.7850',
     },
   ];
 
@@ -47,6 +54,7 @@ const Index = () => {
       description: 'Древняя крепость XVI века с сохранившимися башнями и стенами',
       workTime: '09:00 - 18:00',
       price: '300 ₽',
+      coordinates: '55.0983,38.7788',
     },
     {
       id: 2,
@@ -56,6 +64,7 @@ const Index = () => {
       description: 'Интерактивный музей с дегустацией знаменитой коломенской пастилы',
       workTime: '10:00 - 20:00',
       price: '500 ₽',
+      coordinates: '55.0978,38.7795',
     },
     {
       id: 3,
@@ -65,6 +74,7 @@ const Index = () => {
       description: 'Главный собор Коломенского Кремля с уникальными фресками',
       workTime: '08:00 - 19:00',
       price: 'Бесплатно',
+      coordinates: '55.0985,38.7792',
     },
     {
       id: 4,
@@ -74,6 +84,7 @@ const Index = () => {
       description: 'Атмосферный музей быта советской коммунальной квартиры',
       workTime: '11:00 - 19:00',
       price: '400 ₽',
+      coordinates: '55.0995,38.7810',
     },
   ];
 
@@ -87,6 +98,8 @@ const Index = () => {
       description: 'Традиционные калачи и выпечка по старинным рецептам',
       address: 'ул. Зайцева, 14',
       specialty: 'Калачи, пироги',
+      phone: '+7 (496) 618-55-11',
+      coordinates: '55.0975,38.7765',
     },
     {
       id: 2,
@@ -97,6 +110,8 @@ const Index = () => {
       description: 'Аутентичная русская кухня в историческом центре',
       address: 'ул. Лажечникова, 5',
       specialty: 'Щи, пельмени, блины',
+      phone: '+7 (496) 612-40-44',
+      coordinates: '55.0980,38.7780',
     },
     {
       id: 3,
@@ -107,6 +122,8 @@ const Index = () => {
       description: 'Уютное кафе с десертами и напитками',
       address: 'ул. Посадская, 13',
       specialty: 'Пастила, чай, кофе',
+      phone: '+7 (496) 615-73-20',
+      coordinates: '55.0988,38.7800',
     },
   ];
 
@@ -134,6 +151,32 @@ const Index = () => {
       default:
         return 'bg-gray-500';
     }
+  };
+
+  const openRoute = (coordinates: string) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${coordinates}`;
+    window.open(url, '_blank');
+    toast.success('Открываем маршрут в Google Maps');
+  };
+
+  const openLandmarkRoute = (coordinates: string) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${coordinates}`;
+    window.open(url, '_blank');
+    toast.success('Строим маршрут до места');
+  };
+
+  const handleBooking = (restaurant: any) => {
+    setSelectedRestaurant(restaurant);
+    setIsBookingOpen(true);
+  };
+
+  const copyPhone = (phone: string) => {
+    navigator.clipboard.writeText(phone);
+    toast.success('Номер телефона скопирован');
+  };
+
+  const callPhone = (phone: string) => {
+    window.location.href = `tel:${phone}`;
   };
 
   return (
@@ -234,7 +277,7 @@ const Index = () => {
                           ))}
                         </ul>
                       </div>
-                      <Button className="w-full" variant="default">
+                      <Button className="w-full" variant="default" onClick={() => openRoute(route.coordinates)}>
                         <Icon name="Navigation" className="mr-2" size={16} />
                         Построить маршрут
                       </Button>
@@ -329,7 +372,7 @@ const Index = () => {
                         <span className="font-semibold">{landmark.price}</span>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Button className="flex-1">
+                        <Button className="flex-1" onClick={() => openLandmarkRoute(landmark.coordinates)}>
                           <Icon name="Navigation" className="mr-2" size={16} />
                           Как добраться
                         </Button>
@@ -388,7 +431,7 @@ const Index = () => {
                         <Icon name="ChefHat" size={16} className="text-muted-foreground mt-0.5" />
                         <span className="font-semibold">{restaurant.specialty}</span>
                       </div>
-                      <Button className="w-full" variant="default">
+                      <Button className="w-full" variant="default" onClick={() => handleBooking(restaurant)}>
                         <Icon name="UtensilsCrossed" className="mr-2" size={16} />
                         Забронировать
                       </Button>
@@ -443,6 +486,62 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Бронирование столика</DialogTitle>
+            <DialogDescription>
+              {selectedRestaurant?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="MapPin" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Адрес</p>
+                <p className="font-medium">{selectedRestaurant?.address}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="Phone" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Телефон для бронирования</p>
+                <p className="font-medium text-lg">{selectedRestaurant?.phone}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="ChefHat" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Специализация</p>
+                <p className="font-medium">{selectedRestaurant?.specialty}</p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" onClick={() => callPhone(selectedRestaurant?.phone)}>
+                <Icon name="Phone" className="mr-2" size={18} />
+                Позвонить
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => copyPhone(selectedRestaurant?.phone)}>
+                <Icon name="Copy" className="mr-2" size={18} />
+                Копировать
+              </Button>
+            </div>
+
+            <Button 
+              variant="secondary" 
+              className="w-full" 
+              onClick={() => openLandmarkRoute(selectedRestaurant?.coordinates)}
+            >
+              <Icon name="Navigation" className="mr-2" size={18} />
+              Построить маршрут
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
