@@ -10,7 +10,9 @@ import { toast } from 'sonner';
 const Index = () => {
   const [activeSection, setActiveSection] = useState('routes');
   const [selectedRestaurant, setSelectedRestaurant] = useState<any>(null);
+  const [selectedHotel, setSelectedHotel] = useState<any>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isHotelBookingOpen, setIsHotelBookingOpen] = useState(false);
 
   const routes = [
     {
@@ -127,6 +129,57 @@ const Index = () => {
     },
   ];
 
+  const hotels = [
+    {
+      id: 1,
+      name: 'Гостиница 40-й Меридиан',
+      type: 'Гостиница',
+      rating: 4.7,
+      pricePerNight: 'от 3500 ₽',
+      description: 'Современная гостиница в центре города с комфортными номерами',
+      address: 'ул. Октябрьской Революции, 182',
+      amenities: ['Wi-Fi', 'Завтрак', 'Парковка', 'Ресторан'],
+      phone: '+7 (496) 612-00-40',
+      coordinates: '55.0850,38.7650',
+    },
+    {
+      id: 2,
+      name: 'Отель Коломна',
+      type: 'Отель',
+      rating: 4.5,
+      pricePerNight: 'от 2800 ₽',
+      description: 'Уютный отель недалеко от Кремля с видом на город',
+      address: 'ул. Зайцева, 16',
+      amenities: ['Wi-Fi', 'Завтрак', 'Кондиционер'],
+      phone: '+7 (496) 618-99-00',
+      coordinates: '55.0970,38.7770',
+    },
+    {
+      id: 3,
+      name: 'Гостевой дом Старая Коломна',
+      type: 'Гостевой дом',
+      rating: 4.8,
+      pricePerNight: 'от 2000 ₽',
+      description: 'Аутентичный гостевой дом в исторической части города',
+      address: 'ул. Лазарева, 28',
+      amenities: ['Wi-Fi', 'Кухня', 'Уютная атмосфера'],
+      phone: '+7 (496) 614-25-33',
+      coordinates: '55.0990,38.7790',
+    },
+    {
+      id: 4,
+      name: 'Хостел Достоевский',
+      type: 'Хостел',
+      rating: 4.3,
+      pricePerNight: 'от 800 ₽',
+      description: 'Бюджетный хостел для путешественников в самом центре',
+      address: 'ул. Лажечникова, 13',
+      amenities: ['Wi-Fi', 'Общая кухня', 'Прачечная'],
+      phone: '+7 (496) 619-11-55',
+      coordinates: '55.0975,38.7785',
+    },
+  ];
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Архитектура':
@@ -170,6 +223,11 @@ const Index = () => {
     setIsBookingOpen(true);
   };
 
+  const handleHotelBooking = (hotel: any) => {
+    setSelectedHotel(hotel);
+    setIsHotelBookingOpen(true);
+  };
+
   const copyPhone = (phone: string) => {
     navigator.clipboard.writeText(phone);
     toast.success('Номер телефона скопирован');
@@ -209,22 +267,26 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue="routes" className="w-full" onValueChange={setActiveSection}>
-          <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 mb-8 h-14">
+          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-5 mb-8 h-14">
             <TabsTrigger value="routes" className="text-base">
-              <Icon name="Route" className="mr-2" size={18} />
+              <Icon name="Route" className="mr-1 sm:mr-2" size={18} />
               <span className="hidden sm:inline">Маршруты</span>
             </TabsTrigger>
             <TabsTrigger value="map" className="text-base">
-              <Icon name="Map" className="mr-2" size={18} />
+              <Icon name="Map" className="mr-1 sm:mr-2" size={18} />
               <span className="hidden sm:inline">Карта</span>
             </TabsTrigger>
             <TabsTrigger value="landmarks" className="text-base">
-              <Icon name="Landmark" className="mr-2" size={18} />
+              <Icon name="Landmark" className="mr-1 sm:mr-2" size={18} />
               <span className="hidden sm:inline">Места</span>
             </TabsTrigger>
             <TabsTrigger value="restaurants" className="text-base">
-              <Icon name="UtensilsCrossed" className="mr-2" size={18} />
-              <span className="hidden sm:inline">Рестораны</span>
+              <Icon name="UtensilsCrossed" className="mr-1 sm:mr-2" size={18} />
+              <span className="hidden sm:inline">Еда</span>
+            </TabsTrigger>
+            <TabsTrigger value="hotels" className="text-base">
+              <Icon name="Hotel" className="mr-1 sm:mr-2" size={18} />
+              <span className="hidden sm:inline">Ночлег</span>
             </TabsTrigger>
           </TabsList>
 
@@ -441,6 +503,82 @@ const Index = () => {
               ))}
             </div>
           </TabsContent>
+
+          <TabsContent value="hotels" className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl font-bold mb-3">Где остановиться</h2>
+              <p className="text-lg text-muted-foreground">
+                Комфортные варианты проживания в Коломне на любой бюджет
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {hotels.map((hotel, index) => (
+                <Card
+                  key={hotel.id}
+                  className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-scale-in overflow-hidden"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div
+                    className="h-48 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url('https://cdn.poehali.dev/projects/1f9adb36-a649-4428-9ce8-ff7712e2034f/files/8c474289-97a0-4890-a030-cad248621858.jpg')`,
+                    }}
+                  />
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Icon name="Hotel" className="text-primary" size={24} />
+                          <CardTitle className="text-2xl">{hotel.name}</CardTitle>
+                        </div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <Badge variant="secondary">{hotel.type}</Badge>
+                          <div className="flex items-center gap-1">
+                            <Icon name="Star" className="text-yellow-500 fill-yellow-500" size={16} />
+                            <span className="font-semibold">{hotel.rating}</span>
+                          </div>
+                          <Badge className="bg-accent text-white">{hotel.pricePerNight}</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <CardDescription className="text-base mt-3">{hotel.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-2 text-sm">
+                        <Icon name="MapPin" size={16} className="text-muted-foreground mt-0.5" />
+                        <span>{hotel.address}</span>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold mb-2 flex items-center gap-2">
+                          <Icon name="Check" size={16} className="text-primary" />
+                          Удобства:
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {hotel.amenities.map((amenity, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {amenity}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-2">
+                        <Button className="flex-1" onClick={() => handleHotelBooking(hotel)}>
+                          <Icon name="Phone" className="mr-2" size={16} />
+                          Забронировать
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => openLandmarkRoute(hotel.coordinates)}>
+                          <Icon name="Navigation" size={16} />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
 
@@ -535,6 +673,73 @@ const Index = () => {
               variant="secondary" 
               className="w-full" 
               onClick={() => openLandmarkRoute(selectedRestaurant?.coordinates)}
+            >
+              <Icon name="Navigation" className="mr-2" size={18} />
+              Построить маршрут
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isHotelBookingOpen} onOpenChange={setIsHotelBookingOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Бронирование номера</DialogTitle>
+            <DialogDescription>
+              {selectedHotel?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="MapPin" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Адрес</p>
+                <p className="font-medium">{selectedHotel?.address}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="Phone" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Телефон для бронирования</p>
+                <p className="font-medium text-lg">{selectedHotel?.phone}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Icon name="DollarSign" size={20} className="text-primary" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Стоимость за ночь</p>
+                <p className="font-medium text-lg">{selectedHotel?.pricePerNight}</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Удобства</p>
+              <div className="flex flex-wrap gap-2">
+                {selectedHotel?.amenities.map((amenity: string, idx: number) => (
+                  <Badge key={idx} variant="outline">
+                    {amenity}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" onClick={() => callPhone(selectedHotel?.phone)}>
+                <Icon name="Phone" className="mr-2" size={18} />
+                Позвонить
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => copyPhone(selectedHotel?.phone)}>
+                <Icon name="Copy" className="mr-2" size={18} />
+                Копировать
+              </Button>
+            </div>
+
+            <Button 
+              variant="secondary" 
+              className="w-full" 
+              onClick={() => openLandmarkRoute(selectedHotel?.coordinates)}
             >
               <Icon name="Navigation" className="mr-2" size={18} />
               Построить маршрут
